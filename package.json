@@ -1,0 +1,25 @@
+{
+    "name": "pdf-utilities",
+    "version": "2.0.0",
+    "description": "VS Code extension — PDF tools for GitHub Copilot agent mode (no MCP required)",
+    "scripts": {
+        "compile": "cd extension && npm run compile",
+        "watch": "cd extension && npm run watch",
+        "package": "cd extension && npm run package",
+        "publish": "cd extension && npm run publish",
+        "install:ext": "cd extension && npm install"
+    },
+    "keywords": [
+        "pdf",
+        "vscode-extension",
+        "github-copilot",
+        "language-model-tools",
+        "agent"
+    ],
+    "author": "thekaasking",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/thekaasking/copilot-pdf-utilities.git"
+    }
+}

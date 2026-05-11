@@ -1,0 +1,373 @@
+{
+    "name": "pdf-utilities",
+    "displayName": "PDF Utilities for GitHub Copilot",
+    "description": "AI-powered PDF tools for GitHub Copilot agent mode — read, create, merge, split, and edit PDFs without MCP",
+    "version": "2.0.0",
+    "publisher": "thekaasking",
+    "icon": "icon.png",
+    "engines": {
+        "vscode": "^1.100.0"
+    },
+    "categories": [
+        "AI",
+        "Other",
+        "Data Science"
+    ],
+    "keywords": [
+        "pdf",
+        "ai assistant",
+        "copilot",
+        "agent",
+        "language model tools",
+        "pdf reader",
+        "pdf writer",
+        "pdf merge",
+        "pdf split",
+        "document processing"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "chatParticipants": [
+            {
+                "id": "pdf-utilities.pdf",
+                "fullName": "PDF Reader",
+                "name": "pdf",
+                "description": "Attach a PDF file and ask questions about it.",
+                "isSticky": false
+            }
+        ],
+        "languageModelTools": [
+            {
+                "name": "pdf-utilities_read_pdf",
+                "tags": [
+                    "pdf",
+                    "pdf-utilities"
+                ],
+                "toolReferenceName": "pdf_read",
+                "displayName": "Read PDF",
+                "userDescription": "Extract text content from a PDF file.",
+                "modelDescription": "Extracts text from a PDF file and returns the full text along with page count and basic metadata (title, author, page count, file size). Use this when you need to read the content of a PDF. Supports an optional page range like '1-5' or '1,3,5-10'. File path must be absolute.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(file-pdf)",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string",
+                            "description": "Absolute path to the PDF file to read."
+                        },
+                        "pageRange": {
+                            "type": "string",
+                            "description": "Optional page range to extract, e.g. '1-5' or '1,3,5-10'. If omitted, all pages are extracted."
+                        }
+                    },
+                    "required": [
+                        "filePath"
+                    ]
+                }
+            },
+            {
+                "name": "pdf-utilities_get_pdf_info",
+                "tags": [
+                    "pdf",
+                    "pdf-utilities"
+                ],
+                "toolReferenceName": "pdf_info",
+                "displayName": "Get PDF Info",
+                "userDescription": "Get metadata and information about a PDF file.",
+                "modelDescription": "Returns metadata for a PDF file: page count, title, author, subject, creator, producer, creation date, modification date, and file size. Use this to inspect a PDF without reading its full text content. File path must be absolute.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(info)",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string",
+                            "description": "Absolute path to the PDF file."
+                        }
+                    },
+                    "required": [
+                        "filePath"
+                    ]
+                }
+            },
+            {
+                "name": "pdf-utilities_create_pdf",
+                "tags": [
+                    "pdf",
+                    "pdf-utilities"
+                ],
+                "toolReferenceName": "pdf_create",
+                "displayName": "Create PDF",
+                "userDescription": "Create a new PDF from text content.",
+                "modelDescription": "Creates a new PDF file from plain text content. Supports optional metadata (title, author, subject), font size, and page size (e.g. 'A4', 'Letter'). The outputPath must be an absolute path ending in .pdf.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(new-file)",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "content": {
+                            "type": "string",
+                            "description": "Text content to write into the PDF."
+                        },
+                        "outputPath": {
+                            "type": "string",
+                            "description": "Absolute path where the new PDF should be saved."
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "Optional PDF title metadata."
+                        },
+                        "author": {
+                            "type": "string",
+                            "description": "Optional PDF author metadata."
+                        },
+                        "subject": {
+                            "type": "string",
+                            "description": "Optional PDF subject metadata."
+                        },
+                        "fontSize": {
+                            "type": "number",
+                            "description": "Font size in points (default: 12)."
+                        },
+                        "pageSize": {
+                            "type": "string",
+                            "description": "Page size name, e.g. 'A4', 'Letter', 'Legal' (default: 'A4')."
+                        }
+                    },
+                    "required": [
+                        "content",
+                        "outputPath"
+                    ]
+                }
+            },
+            {
+                "name": "pdf-utilities_merge_pdfs",
+                "tags": [
+                    "pdf",
+                    "pdf-utilities"
+                ],
+                "toolReferenceName": "pdf_merge",
+                "displayName": "Merge PDFs",
+                "userDescription": "Combine multiple PDF files into one.",
+                "modelDescription": "Merges two or more PDF files into a single PDF. Pages are appended in the order the file paths are provided. All file paths must be absolute.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(extensions)",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "filePaths": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Ordered list of absolute paths to PDF files to merge."
+                        },
+                        "outputPath": {
+                            "type": "string",
+                            "description": "Absolute path where the merged PDF should be saved."
+                        }
+                    },
+                    "required": [
+                        "filePaths",
+                        "outputPath"
+                    ]
+                }
+            },
+            {
+                "name": "pdf-utilities_split_pdf",
+                "tags": [
+                    "pdf",
+                    "pdf-utilities"
+                ],
+                "toolReferenceName": "pdf_split",
+                "displayName": "Split PDF",
+                "userDescription": "Extract a range of pages from a PDF into a new file.",
+                "modelDescription": "Extracts a subset of pages from a PDF and saves them as a new PDF. The pageRange accepts formats like '1-5', '3', or '1,4,7-10'. All file paths must be absolute.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(split-horizontal)",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string",
+                            "description": "Absolute path to the source PDF file."
+                        },
+                        "pageRange": {
+                            "type": "string",
+                            "description": "Pages to extract, e.g. '1-5', '3', or '1,4,7-10'."
+                        },
+                        "outputPath": {
+                            "type": "string",
+                            "description": "Absolute path where the extracted pages PDF should be saved."
+                        }
+                    },
+                    "required": [
+                        "filePath",
+                        "pageRange",
+                        "outputPath"
+                    ]
+                }
+            },
+            {
+                "name": "pdf-utilities_update_metadata",
+                "tags": [
+                    "pdf",
+                    "pdf-utilities"
+                ],
+                "toolReferenceName": "pdf_metadata",
+                "displayName": "Update PDF Metadata",
+                "userDescription": "Update the title, author, subject, or keywords of a PDF.",
+                "modelDescription": "Updates the metadata fields (title, author, subject, keywords) of an existing PDF. Can save the result to the same file or a new output path. File path must be absolute.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(tag)",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string",
+                            "description": "Absolute path to the PDF file to update."
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "New title to set."
+                        },
+                        "author": {
+                            "type": "string",
+                            "description": "New author to set."
+                        },
+                        "subject": {
+                            "type": "string",
+                            "description": "New subject to set."
+                        },
+                        "keywords": {
+                            "type": "string",
+                            "description": "New keywords to set (comma-separated string)."
+                        },
+                        "outputPath": {
+                            "type": "string",
+                            "description": "Absolute path to save the modified PDF. Defaults to overwriting the original."
+                        }
+                    },
+                    "required": [
+                        "filePath"
+                    ]
+                }
+            },
+            {
+                "name": "pdf-utilities_extract_pages",
+                "tags": [
+                    "pdf",
+                    "pdf-utilities"
+                ],
+                "toolReferenceName": "pdf_extract",
+                "displayName": "Extract PDF Pages",
+                "userDescription": "Save individual PDF pages as separate files.",
+                "modelDescription": "Extracts specific pages from a PDF and saves each as an individual file in the output directory. Page numbers are 1-based. The output directory will be created if it does not exist. All paths must be absolute.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(files)",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string",
+                            "description": "Absolute path to the source PDF file."
+                        },
+                        "pages": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            },
+                            "description": "1-based page numbers to extract, e.g. [1, 3, 5]."
+                        },
+                        "outputDir": {
+                            "type": "string",
+                            "description": "Absolute path to the directory where extracted page files will be saved."
+                        },
+                        "prefix": {
+                            "type": "string",
+                            "description": "Filename prefix for extracted pages (default: 'page'). Files are named <prefix>_<pageNum>.pdf."
+                        }
+                    },
+                    "required": [
+                        "filePath",
+                        "pages",
+                        "outputDir"
+                    ]
+                }
+            }
+        ],
+        "chatInstructions": [
+            {
+                "name": "PDFUtilitiesGuidelines",
+                "description": "Tools for PDF manipulation - read, create, merge, split, and edit PDFs",
+                "path": "resources/instructions/pdf-utilities.instructions.md"
+            }
+        ],
+        "commands": [
+            {
+                "command": "pdfUtilities.viewDocs",
+                "title": "Open PDF Utilities Documentation",
+                "category": "PDF Utilities"
+            },
+            {
+                "command": "pdfUtilities.showTools",
+                "title": "Show Available PDF Tools",
+                "category": "PDF Utilities"
+            }
+        ],
+        "configuration": {
+            "title": "PDF Utilities",
+            "properties": {
+                "pdfUtilities.logLevel": {
+                    "type": "string",
+                    "enum": [
+                        "error",
+                        "warn",
+                        "info",
+                        "debug"
+                    ],
+                    "default": "info",
+                    "description": "Log level for PDF Utilities output."
+                },
+                "pdfUtilities.maxPdfSize": {
+                    "type": "number",
+                    "default": 50,
+                    "description": "Maximum PDF file size in MB for processing."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "test": "jest --runInBand",
+        "package": "vsce package",
+        "publish": "vsce publish"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/node": "^20.0.0",
+        "@types/vscode": "^1.100.0",
+        "@vscode/vsce": "^2.22.0",
+        "jest": "^30.4.2",
+        "ts-jest": "^29.4.9",
+        "typescript": "^5.3.0"
+    },
+    "dependencies": {
+        "pdf-lib": "^1.17.1",
+        "pdf-parse": "^1.1.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/thekaasking/copilot-pdf-utilities.git"
+    },
+    "bugs": {
+        "url": "https://github.com/thekaasking/copilot-pdf-utilities/issues"
+    },
+    "license": "MIT"
+}

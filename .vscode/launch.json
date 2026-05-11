@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch PDF Utilities Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/extension"],
+      "preLaunchTask": "compile-extension",
+      "outFiles": ["${workspaceFolder}/extension/dist/**/*.js"],
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
