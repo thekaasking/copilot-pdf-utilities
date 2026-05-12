@@ -1,7 +1,7 @@
 {
     "name": "copilot-pdf-utilities",
-    "displayName": "PDF Utilities for GitHub Copilot",
-    "description": "AI-powered PDF tools for GitHub Copilot agent mode — read, create, merge, split, and edit PDFs without MCP",
+    "displayName": "PDF Tools for GitHub Copilot",
+    "description": "PDF Language Model tools for GitHub Copilot agent mode — read, create, merge, split, and edit PDFs without MCP",
     "version": "2.0.0",
     "publisher": "thekaasking",
     "icon": "icon.png",
