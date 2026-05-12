@@ -302,8 +302,6 @@
         ],
         "chatInstructions": [
             {
-                "name": "PDFUtilitiesGuidelines",
-                "description": "Tools for PDF manipulation - read, create, merge, split, and edit PDFs",
                 "path": "resources/instructions/pdf-utilities.instructions.md"
             }
         ],

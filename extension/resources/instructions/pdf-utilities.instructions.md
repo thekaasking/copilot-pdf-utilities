@@ -1,3 +1,9 @@
+---
+name: PDFUtilitiesGuidelines
+description: Tools for PDF manipulation - read, create, merge, split, and edit PDFs
+applyTo: **/*.pdf
+---
+
 # PDF Utilities - GitHub Copilot Chat Instructions
 
 This extension provides PDF manipulation tools registered natively in VS Code via the Language Model Tools API. Use these tools when the user asks to work with PDF files.
