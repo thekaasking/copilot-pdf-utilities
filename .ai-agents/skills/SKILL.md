@@ -11,71 +11,36 @@ See [QUICK-REFERENCE.md](../QUICK-REFERENCE.md) for the condensed cheat sheet an
 | Add or modify a PDF tool | `skills/PATTERNS-REFERENCE.md` |
 | Change an interface or schema | `skills/CONTRACT-REFERENCE.md` |
 | Update documentation | `skills/DOCUMENTATION-WORKFLOW.md` |
-| Multi-step work session | `skills/SESSION-WORKFLOW.md` |
+| Manage a multi-step task | `skills/SESSION-WORKFLOW.md` |
 
+## Quick Start
 
----
+1. Read [AGENTS.md](../../AGENTS.md) and [QUICK-REFERENCE.md](../QUICK-REFERENCE.md).
+2. If you are changing a tool contract or `PDFTools` signature, load [CONTRACT-REFERENCE.md](./CONTRACT-REFERENCE.md).
+3. If you are changing implementation details, load [PATTERNS-REFERENCE.md](./PATTERNS-REFERENCE.md).
+4. If you are updating docs, load [DOCUMENTATION-WORKFLOW.md](./DOCUMENTATION-WORKFLOW.md).
+5. Make the smallest focused change possible.
+6. Run the narrowest useful validation after each edit.
+7. Update tests and docs together when behavior is user-facing.
 
-## Quick Start Code
-
-### Essential Pattern (Copy-Paste Ready)
-
-```typescript
-// 1. Identify context (ALWAYS use relative paths!)
-const context = await identify_context({ 
-  file_path: "./src/index.ts"  // ✅ Relative path
-});
-
-// 2. Check for active session
-const currentFocus = await get_current_focus();
-
-// 3. Start session or load guidelines
-if (!currentFocus) {
-  await start_session({
-    context: context.context,
-    current_focus: "Implementing new PDF tool",
-    objectives: [
-      "Add tool to PDFTools class",
-      "Add TypeScript interfaces"
-    ]
-  });
-} else {
-  const guidelines = await get_merged_guidelines({ context: context.context });
-  // Review guidelines before proceeding
-}
-
-// 4. Do your work
-// ... implementation ...
-
-// 5. Save progress
-await create_checkpoint({
-  summary: "Completed watermark tool implementation",
-  next_focus: "Add tests and update documentation"
-});
-
-// 6. Complete when done
-await complete_session();
-```
-
-
-## Workflow Files (Load As Needed)
+## Workflow Files
 
 ### Session Management
 **File**: `./SESSION-WORKFLOW.md`  
-**When**: Starting new work, managing focus, handling interruptions  
-**Topics**: Session lifecycle, checkpoint patterns, focus updates
+**When**: Starting work, maintaining focus, handling interruptions  
+**Topics**: Session lifecycle, checkpoints, next-step tracking
 
 ### Contract Validation
 **File**: `./CONTRACT-REFERENCE.md`  
 **When**: Changing interfaces or adding features  
-**Topics**: Critical interfaces, tool schemas, breaking change detection
+**Topics**: PDFTools signatures, tool schemas, breaking-change detection
 
 ### Documentation
 **File**: `./DOCUMENTATION-WORKFLOW.md`  
 **When**: Adding features, making architectural decisions, updating docs  
-**Topics**: When to document, ADR patterns, changelog updates
+**Topics**: When to document, README updates, changelog guidance
 
 ### Code Patterns
 **File**: `./PATTERNS-REFERENCE.md`  
 **When**: Implementing new features, refactoring, unsure of conventions  
-**Topics**: MCP patterns, error handling, TypeScript conventions, VS Code integration
+**Topics**: VS Code LM tools, PDF operations, error handling, TypeScript conventions

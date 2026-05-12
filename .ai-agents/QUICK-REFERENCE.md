@@ -2,9 +2,7 @@
 
 **Purpose**: Condensed cheat sheet for working on this project.
 
----
-
-## 🎯 Every Conversation Workflow
+## Every Conversation Workflow
 
 1. Read [AGENTS.md](../AGENTS.md) for full context
 2. Identify which file you need (`extension/src/pdf-tools.ts`, `extension/src/tools.ts`, etc.)
@@ -12,9 +10,7 @@
 4. Run `npm test` to verify 27 unit tests still pass
 5. Press `F5` to test in the extension host
 
----
-
-## 🚨 Critical Rules
+## Critical Rules
 
 | Rule | Detail |
 |---|---|
@@ -25,11 +21,33 @@
 | VS Code version | Engine must stay `^1.100.0` |
 | Tests | Mock pdf-parse: `jest.mock('pdf-parse', ...)` |
 
----
+### PATH CONVENTION (MOST IMPORTANT!)
 
-## 📂 Key Files Cheat Sheet
+```typescript
+// ✅ CORRECT - All examples must use relative paths
+"./extension/src/pdf-tools.ts"
+"./extension/src/tools.ts"
+"./extension/package.json"
 
+// ❌ WRONG - Never use absolute paths
+"/absolute/path/to/file.ts"
 ```
+
+
+* [ ] Validate `options.input` before using it in LM tool handlers
+* [ ] Use clear error handling around PDF operations that can fail
+* [ ] Check file existence with `existsSync()` before operations
+* [ ] Follow strict TypeScript (avoid `any` unless there is a strong reason)
+
+### After Meaningful Progress
+
+* [ ] Update `README.md`, `extension/README.md`, or `AGENTS.md` if user-facing behavior changes
+* [ ] Run `npm run compile` and `npm test` before packaging
+
+
+## Key Files Cheat Sheet
+
+```txt
 extension/src/extension.ts     ← Activation, tool+participant registration
 extension/src/tools.ts         ← 7 LanguageModelTool classes
 extension/src/pdf-tools.ts     ← PDFTools class (business logic)
@@ -40,9 +58,7 @@ extension/tsconfig.test.json   ← Test TS config (commonjs)
 extension/jest.config.js       ← Jest config (points to tsconfig.test.json)
 ```
 
----
-
-## 🛠 Build Commands
+## Build Commands
 
 ```bash
 cd extension
@@ -55,7 +71,7 @@ npm run publish   # Publish to Marketplace
 
 ---
 
-## 🔧 LM Tool Classes (one per tool)
+## LM Tool Classes (one per tool)
 
 | Class | Tool Name | `#` Reference |
 |---|---|---|
@@ -68,36 +84,3 @@ npm run publish   # Publish to Marketplace
 | `ExtractPagesTool` | `pdf-utilities_extract_pages` | `#pdf_extract` |
 
 
----
-
-## 🚨 Critical Rules
-
-### PATH CONVENTION (MOST IMPORTANT!)
-
-```typescript
-// ✅ CORRECT - All examples must use relative paths
-"./src/index.ts"
-"./extension/package.json"
-"./dist/pdf-tools.js"
-
-// ❌ WRONG - Never use absolute paths
-"/Users/username/project/src/index.ts"
-"/absolute/path/to/file.ts"
-```
-
-
-* [ ] Validate args before using in tool handlers (`if (!args) throw Error`)
-* [ ] Use try-catch in MCP CallToolRequestSchema handlers
-* [ ] Check file existence with `existsSync()` before operations
-* [ ] Follow strict TypeScript (no `any` without reason)
-
-### After Meaningful Progress
-
-* [ ] Update CHANGELOG.md if user-facing changes
-* [ ] Run `npm run compile` and `npm test` before packaging
-
----
-
-## 📂 Project Structure Cheat Sheet
-
-```
