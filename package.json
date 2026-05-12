@@ -1,5 +1,5 @@
 {
-    "name": "pdf-utilities",
+    "name": "copilot-pdf-utilities",
     "version": "2.0.0",
     "description": "VS Code extension — PDF tools for GitHub Copilot agent mode (no MCP required)",
     "scripts": {

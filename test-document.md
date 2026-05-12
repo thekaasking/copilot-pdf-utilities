@@ -84,7 +84,7 @@ to extract and analyze text content from PDF documents.
 
 Summary:
 
-  - 7 PDF tools available via MCP
+  - 7 PDF tools available as Language Model Tools
 
   - \@pdf enables direct PDF interaction in Copilot Chat
 
