@@ -129,7 +129,7 @@ MIT — see [LICENSE](LICENSE)
 4. Type "Install from VSIX"
 5. Select the downloaded file
 
-## 🎯 Usage
+## Usage
 
 Once installed, you can use PDF operations directly in GitHub Copilot Chat:
 
