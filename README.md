@@ -10,7 +10,8 @@ pdf-utilities-mcp/
     ├── src/
     │   ├── extension.ts   # Activation: registers tools + @pdf participant
     │   ├── tools.ts       # 7 LanguageModelTool implementations
-    │   └── pdf-tools.ts   # Core PDF logic (pdf-lib + pdf-parse)
+    │   ├── pdf-tools.ts   # Core PDF logic (pdf-lib + pdf-parse)
+    │   └── tokenizer.ts   # Word count + approximate LLM token estimation
     ├── resources/
     │   └── instructions/  # Copilot Chat instructions
     └── package.json       # Extension manifest with languageModelTools contributions
@@ -20,8 +21,8 @@ pdf-utilities-mcp/
 
 | `#reference` | Description |
 |---|---|
-| `#pdf_read` | Extract text from a PDF (optional page range) |
-| `#pdf_info` | Get metadata: pages, title, author, file size… |
+| `#pdf_read` | Extract text from a PDF (optional page range, maxWords/maxTokens pagination) |
+| `#pdf_info` | Get metadata: pages, title, author, file size, word count, token estimate… |
 | `#pdf_create` | Create a new PDF from plain text |
 | `#pdf_merge` | Merge multiple PDFs into one |
 | `#pdf_split` | Extract a page range into a new PDF |

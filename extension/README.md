@@ -4,8 +4,8 @@ AI-powered PDF tools built directly into GitHub Copilot agent mode — no MCP se
 
 ## Features
 
-* **Read PDFs** — Extract text content (full file or specific page ranges)
-* **Get PDF Info** — Retrieve metadata: page count, title, author, file size, dates
+* **Read PDFs** — Extract text content (full file or specific page ranges, with optional word/token pagination)
+* **Get PDF Info** — Retrieve metadata: page count, title, author, file size, dates, word count, token estimate
 * **Create PDFs** — Generate a new PDF from plain text with custom formatting
 * **Merge PDFs** — Combine multiple PDF files into one
 * **Split PDFs** — Extract a page range to a new file
@@ -57,8 +57,8 @@ Attach a PDF file in chat and ask questions about it:
 
 | Reference | Tool Name | Description |
 |---|---|---|
-| `#pdf_read` | Read PDF | Extract text, optionally with page range |
-| `#pdf_info` | Get PDF Info | Metadata (pages, title, author, size…) |
+| `#pdf_read` | Read PDF | Extract text, optionally with page range and maxWords/maxTokens pagination |
+| `#pdf_info` | Get PDF Info | Metadata (pages, title, author, size, word count, token estimate) |
 | `#pdf_create` | Create PDF | New PDF from text content |
 | `#pdf_merge` | Merge PDFs | Combine multiple PDFs into one |
 | `#pdf_split` | Split PDF | Extract page range to new file |

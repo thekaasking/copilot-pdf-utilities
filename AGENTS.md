@@ -32,9 +32,11 @@ copilot-pdf-utilities/            ← repo root
 │   ├── src/
 │   │   ├── extension.ts     ← Extension activation, registers tools + @pdf chat participant
 │   │   ├── tools.ts         ← 7 LanguageModelTool classes + registerPdfTools()
-│   │   └── pdf-tools.ts     ← PDF business logic (pdf-lib + pdf-parse)
+│   │   ├── pdf-tools.ts     ← PDF business logic (pdf-lib + pdf-parse)
+│   │   └── tokenizer.ts     ← Lightweight word count + token estimation utilities
 │   ├── tests/
-│   │   └── pdf-tools.test.ts ← Jest unit tests (27 tests, all passing)
+│   │   ├── pdf-tools.test.ts ← Jest unit tests (27 tests, all passing)
+│   │   └── tokenizer.test.ts ← Jest unit tests for tokenizer + pagination (26 tests)
 │   ├── resources/
 │   │   └── instructions/
 │   │       └── pdf-utilities.instructions.md ← Copilot chat instructions
@@ -67,6 +69,14 @@ copilot-pdf-utilities/            ← repo root
 * Uses `pdf-lib` for creation/modification (with `useObjectStreams: false` for compatibility)
 * Uses `pdf-parse` for text extraction only
 * Uses `pdf-lib`'s `PDFDocument.load()` for metadata reading (more reliable than pdf-parse for this)
+* `readPDF` supports optional `maxWords` / `maxTokens` pagination (truncates text, reports full counts)
+* `getPDFInfo` returns `wordCount` and `approxTokenCount` alongside other metadata
+
+**Tokenizer (`extension/src/tokenizer.ts`)**:
+* Lightweight, zero-dependency token/word estimation
+* `countWords(text)`: whitespace-based word count
+* `estimateTokens(text)`: approximate LLM token count using `ceil(chars / 4)` heuristic (~±10% for English, compatible with GPT/Claude BPE)
+* `truncateByWords(text, max)` / `truncateByTokens(text, max)`: pagination helpers that cut at word boundaries
 
 ---
 

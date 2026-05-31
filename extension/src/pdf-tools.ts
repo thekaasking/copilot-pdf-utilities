@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, statSync, existsSync, mkdirSync } from 'fs';
 import { PDFDocument, StandardFonts, rgb, PageSizes } from 'pdf-lib';
+import { countWords, estimateTokens, truncateByWords, truncateByTokens } from './tokenizer';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const pdfParse = require('pdf-parse');
 
@@ -14,12 +15,18 @@ export interface PDFInfo {
   modificationDate?: string;
   fileSize: number;
   filePath: string;
+  wordCount?: number;
+  approxTokenCount?: number;
 }
 
 export interface PDFTextContent {
   text: string;
   pages: number;
   info: PDFInfo;
+  wordCount: number;
+  approxTokenCount: number;
+  truncated?: boolean;
+  truncationMethod?: 'maxWords' | 'maxTokens';
 }
 
 export interface CreatePDFOptions {
@@ -33,9 +40,14 @@ export interface CreatePDFOptions {
 
 export class PDFTools {
   /**
-   * Read and extract text from a PDF file
+   * Read and extract text from a PDF file.
+   * Supports optional pagination via maxWords or maxTokens.
    */
-  async readPDF(filePath: string, pageRange?: string): Promise<PDFTextContent> {
+  async readPDF(
+    filePath: string,
+    pageRange?: string,
+    options?: { maxWords?: number; maxTokens?: number }
+  ): Promise<PDFTextContent> {
     if (!existsSync(filePath)) {
       throw new Error(`File not found: ${filePath}`);
     }
@@ -65,15 +77,44 @@ export class PDFTools {
       text = `[Extracted pages ${pageRange} (indices: ${pages.map(p => p + 1).join(',')})]\n${text}`;
     }
 
+    // Compute full-document stats before truncation
+    const totalWordCount = countWords(text);
+    const totalTokenCount = estimateTokens(text);
+    info.wordCount = totalWordCount;
+    info.approxTokenCount = totalTokenCount;
+
+    // Apply pagination/truncation if requested
+    let truncated = false;
+    let truncationMethod: 'maxWords' | 'maxTokens' | undefined;
+
+    if (options?.maxWords && options.maxWords > 0) {
+      const truncatedText = truncateByWords(text, options.maxWords);
+      if (truncatedText.length < text.length) {
+        text = truncatedText;
+        truncated = true;
+        truncationMethod = 'maxWords';
+      }
+    } else if (options?.maxTokens && options.maxTokens > 0) {
+      const truncatedText = truncateByTokens(text, options.maxTokens);
+      if (truncatedText.length < text.length) {
+        text = truncatedText;
+        truncated = true;
+        truncationMethod = 'maxTokens';
+      }
+    }
+
     return {
       text,
       pages: data.numpages,
-      info
+      info,
+      wordCount: totalWordCount,
+      approxTokenCount: totalTokenCount,
+      ...(truncated && { truncated, truncationMethod })
     };
   }
 
   /**
-   * Get PDF metadata and information
+   * Get PDF metadata and information (includes word and token counts)
    */
   async getPDFInfo(filePath: string): Promise<PDFInfo> {
     if (!existsSync(filePath)) {
@@ -83,6 +124,10 @@ export class PDFTools {
     const dataBuffer = readFileSync(filePath);
     const pdfDoc = await PDFDocument.load(dataBuffer);
     const stats = statSync(filePath);
+
+    // Extract text for word/token counting
+    const data = await pdfParse(dataBuffer);
+    const text = data.text as string;
 
     return {
       pages: pdfDoc.getPageCount(),
@@ -94,7 +139,9 @@ export class PDFTools {
       creationDate: pdfDoc.getCreationDate()?.toISOString(),
       modificationDate: pdfDoc.getModificationDate()?.toISOString(),
       fileSize: stats.size,
-      filePath
+      filePath,
+      wordCount: countWords(text),
+      approxTokenCount: estimateTokens(text)
     };
   }
 

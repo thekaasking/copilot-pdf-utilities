@@ -8,6 +8,8 @@ const pdfTools = new PDFTools();
 interface IReadPdfParams {
   filePath: string;
   pageRange?: string;
+  maxWords?: number;
+  maxTokens?: number;
 }
 
 interface IGetPdfInfoParams {
@@ -58,8 +60,8 @@ export class ReadPdfTool implements vscode.LanguageModelTool<IReadPdfParams> {
     options: vscode.LanguageModelToolInvocationOptions<IReadPdfParams>,
     _token: vscode.CancellationToken
   ): Promise<vscode.LanguageModelToolResult> {
-    const { filePath, pageRange } = options.input;
-    const result = await pdfTools.readPDF(filePath, pageRange);
+    const { filePath, pageRange, maxWords, maxTokens } = options.input;
+    const result = await pdfTools.readPDF(filePath, pageRange, { maxWords, maxTokens });
     return new vscode.LanguageModelToolResult([
       new vscode.LanguageModelTextPart(JSON.stringify(result))
     ]);

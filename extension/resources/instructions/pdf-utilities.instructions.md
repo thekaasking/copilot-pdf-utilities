@@ -27,15 +27,18 @@ Activate PDF utilities tools when the user wants to:
 **Parameters**:
 - `filePath` (required): Absolute path to the PDF file
 - `pageRange` (optional): Page range to extract (e.g., "1-5", "1,3,5-10")
+- `maxWords` (optional): Maximum number of words to return. Text is truncated at a word boundary. Full counts are still reported.
+- `maxTokens` (optional): Approximate maximum LLM tokens to return (~4 chars/token). Ignored if `maxWords` is also set.
 
 **Example Usage**:
 ```
 User: "Read the PDF at /Users/name/document.pdf"
 User: "Extract text from pages 1-5 of report.pdf"
-User: "What does the PDF in my Downloads folder say?"
+User: "Read the first 500 tokens of this PDF"
+User: "Get up to 200 words from the document"
 ```
 
-**Response Format**: Returns JSON with `text` (extracted content), `pages` (total page count), and `info` (metadata)
+**Response Format**: Returns JSON with `text` (extracted content), `pages` (total page count), `info` (metadata including wordCount and approxTokenCount), `wordCount`, `approxTokenCount`, and optionally `truncated` (boolean) and `truncationMethod` ('maxWords' or 'maxTokens') if content was truncated.
 
 ### 2. get_pdf_info
 **Purpose**: Retrieve metadata and information about a PDF
@@ -50,7 +53,7 @@ User: "Get information about contract.pdf"
 User: "What's the size of this PDF file?"
 ```
 
-**Response Format**: Returns JSON with pages, title, author, subject, creator, producer, dates, fileSize, filePath
+**Response Format**: Returns JSON with pages, title, author, subject, creator, producer, dates, fileSize, filePath, wordCount, approxTokenCount
 
 ### 3. create_pdf
 **Purpose**: Create a new PDF from text content
