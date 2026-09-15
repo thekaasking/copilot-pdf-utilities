@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.2.0]
+
+- New `read_docx` tool: extracts text from Word documents (`.doc` and `.docx`), with metadata (title, author, subject, last modified by, dates, file size, format), `wordCount`, and `approxTokenCount`.
+- Supports `maxWords`/`maxTokens` pagination on `read_docx`, reusing the same truncation logic as `read_pdf`.
+- `.docx` parsing via `mammoth` (text) and `jszip` (docProps/core.xml metadata); legacy `.doc` (OLE binary) parsing via `word-extractor`.
+- New `docx-tools.ts` module mirroring the shape of `pdf-tools.ts`.
+- Updated `chatInstructions` and extension description/keywords to cover Word document support.
+- Added unit tests for `.docx` (against a real fixture) and `.doc` (routing/shape, with `word-extractor` mocked).
+
 ## [2.1.0]
 
 - Added word count (`wordCount`) and approximate LLM token count (`approxTokenCount`) to `read_pdf` and `get_pdf_info` responses.

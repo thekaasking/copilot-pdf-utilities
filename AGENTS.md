@@ -1,14 +1,14 @@
 # PDF Utilities Extension - AI Agent Guide
 
-**Version**: 2.0.0  
-**Last Updated**: 11-05-2026
+**Version**: 2.2.0  
+**Last Updated**: 15-09-2026
 **Project Type**: VS Code Extension with Language Model Tools
 
 ---
 
 ## Project Overview
 
-PDF Utilities is a VS Code extension that registers 7 PDF manipulation tools via the VS Code Language Model Tools API (`vscode.lm.registerTool`). These tools are natively available to GitHub Copilot and any other LLM inside VS Code agent mode — no MCP server or network process required.
+PDF Utilities is a VS Code extension that registers 8 PDF/Word manipulation tools via the VS Code Language Model Tools API (`vscode.lm.registerTool`). These tools are natively available to GitHub Copilot and any other LLM inside VS Code agent mode — no MCP server or network process required.
 
 ### Core Capabilities
 
@@ -19,6 +19,7 @@ PDF Utilities is a VS Code extension that registers 7 PDF manipulation tools via
 * Split PDFs by page range
 * Update PDF metadata
 * Extract individual pages to separate files
+* Read & extract text from Word documents (`.doc`/`.docx`), with metadata
 
 ---
 
@@ -27,27 +28,30 @@ PDF Utilities is a VS Code extension that registers 7 PDF manipulation tools via
 ### Directory Structure
 
 ```
-copilot-pdf-utilities/            ← repo root 
-├── extension/                ← VS Code extension source (primary working directory)
+copilot-pdf-utilities/            -  repo root 
+├── extension/                -  VS Code extension source (primary working directory)
 │   ├── src/
-│   │   ├── extension.ts     ← Extension activation, registers tools + @pdf chat participant
-│   │   ├── tools.ts         ← 7 LanguageModelTool classes + registerPdfTools()
-│   │   ├── pdf-tools.ts     ← PDF business logic (pdf-lib + pdf-parse)
-│   │   └── tokenizer.ts     ← Lightweight word count + token estimation utilities
+│   │   ├── extension.ts     -  Extension activation, registers tools + @pdf chat participant
+│   │   ├── tools.ts         -  8 LanguageModelTool classes + registerPdfTools()
+│   │   ├── pdf-tools.ts     -  PDF business logic (pdf-lib + pdf-parse)
+│   │   ├── docx-tools.ts    -  Word document business logic (mammoth + jszip + word-extractor)
+│   │   └── tokenizer.ts     -  Lightweight word count + token estimation utilities
 │   ├── tests/
-│   │   ├── pdf-tools.test.ts ← Jest unit tests (27 tests, all passing)
-│   │   └── tokenizer.test.ts ← Jest unit tests for tokenizer + pagination (26 tests)
+│   │   ├── pdf-tools.test.ts     -  Jest unit tests (27 tests, all passing)
+│   │   ├── tokenizer.test.ts     -  Jest unit tests for tokenizer + pagination (26 tests)
+│   │   ├── docx-tools.test.ts    -  Jest unit tests for .docx (real fixture, no mocks)
+│   │   └── docx-tools-doc.test.ts -  Jest unit tests for legacy .doc (word-extractor mocked)
 │   ├── resources/
 │   │   └── instructions/
-│   │       └── pdf-utilities.instructions.md ← Copilot chat instructions
-│   ├── dist/                ← Compiled output (gitignored)
-│   ├── package.json         ← Extension manifest (contributes.languageModelTools)
-│   ├── tsconfig.json        ← TypeScript config (module: nodenext)
-│   ├── tsconfig.test.json   ← TypeScript config for Jest (module: commonjs)
-│   └── jest.config.js       ← Jest configuration
-├── README.md                ← Project readme
-├── assets/BUILD_PUBLISH_GUIDE.md   ← Build and publish instructions
-└── docs/                    ← Reference documentation
+│   │       └── pdf-utilities.instructions.md -  Copilot chat instructions
+│   ├── dist/                -  Compiled output (gitignored)
+│   ├── package.json         -  Extension manifest (contributes.languageModelTools)
+│   ├── tsconfig.json        -  TypeScript config (module: nodenext)
+│   ├── tsconfig.test.json   -  TypeScript config for Jest (module: commonjs)
+│   └── jest.config.js       -  Jest configuration
+├── README.md                -  Project readme
+├── assets/BUILD_PUBLISH_GUIDE.md   -  Build and publish instructions
+└── docs/                    -  Reference documentation
 ```
 
 ### Component Responsibilities
@@ -61,10 +65,10 @@ copilot-pdf-utilities/            ← repo root
 
 **LM Tool Classes (`extension/src/tools.ts`)**:
 
-* 7 classes implementing `vscode.LanguageModelTool<T>`: `ReadPdfTool`, `GetPdfInfoTool`, `CreatePdfTool`, `MergePdfsTool`, `SplitPdfTool`, `UpdatePdfMetadataTool`, `ExtractPagesTool`
+* 8 classes implementing `vscode.LanguageModelTool<T>`: `ReadPdfTool`, `ReadDocxTool`, `GetPdfInfoTool`, `CreatePdfTool`, `MergePdfsTool`, `SplitPdfTool`, `UpdatePdfMetadataTool`, `ExtractPagesTool`
 * Each implements `invoke()` and `prepareInvocation()`
-* Tool names registered: `pdf-utilities_read_pdf`, `pdf-utilities_get_pdf_info`, etc.
-* User-facing `#` references: `#pdf_read`, `#pdf_info`, `#pdf_create`, `#pdf_merge`, `#pdf_split`, `#pdf_metadata`, `#pdf_extract`
+* Tool names registered: `pdf-utilities_read_pdf`, `pdf-utilities_read_docx`, `pdf-utilities_get_pdf_info`, etc.
+* User-facing `#` references: `#pdf_read`, `#read_docx`, `#pdf_info`, `#pdf_create`, `#pdf_merge`, `#pdf_split`, `#pdf_metadata`, `#pdf_extract`
 
 **PDF Business Logic (`extension/src/pdf-tools.ts`)**:
 
@@ -74,6 +78,14 @@ copilot-pdf-utilities/            ← repo root
 * Uses `pdf-lib`'s `PDFDocument.load()` for metadata reading (more reliable than pdf-parse for this)
 * `readPDF` supports optional `maxWords` / `maxTokens` pagination (truncates text, reports full counts)
 * `getPDFInfo` returns `wordCount` and `approxTokenCount` alongside other metadata
+
+**Word Document Business Logic (`extension/src/docx-tools.ts`)**:
+
+* `DocxTools` class with `readDocx(filePath, options)`, mirroring `readPDF`'s shape (text, info, wordCount, approxTokenCount, truncated/truncationMethod)
+* `.docx` (OOXML zip): text via `mammoth.extractRawText()`, title/author/subject/dates via a direct `jszip` read of `docProps/core.xml`
+* `.doc` (legacy OLE binary): text via `word-extractor`'s `getBody()` — no metadata is available for this format
+* Routes on file extension (`.doc` vs `.docx`); throws for any other extension
+* No `pages` field — Word documents have no reliable page count without a layout engine
 
 **Tokenizer (`extension/src/tokenizer.ts`)**:
 
@@ -108,7 +120,7 @@ npm run compile
 cd extension
 npm run compile   # Build TypeScript → dist/
 npm run watch     # Watch mode
-npm test          # Run Jest unit tests (27 tests)
+npm test          # Run Jest unit tests (64 tests)
 npm run package   # Create .vsix
 npm run publish   # Publish to VS Code Marketplace
 ```

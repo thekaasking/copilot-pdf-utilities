@@ -2,13 +2,13 @@
 
 ![PDF Utilities working reading a PDF](assets/read_pdf_tool.png)
 
-AI-powered PDF tools built directly into GitHub Copilot agent mode — no MCP server, no subprocess, works everywhere.
+AI-powered PDF and Word document tools built directly into GitHub Copilot agent mode — no MCP server, no subprocess, works everywhere.
 
 ## Why this extension exists
 
 Model Context Protocol (MCP) servers are the usual way to give Copilot new tools — but in most organizations, MCP is blocked outright. It typically means allowing arbitrary local processes or external network endpoints into the chat context, which security teams routinely disallow via policy (`chat.mcp.enabled` locked to `false` by admin, or MCP disabled organization-wide in GitHub Copilot Business/Enterprise settings). If you've ever had an MCP server rejected by IT, this is why.
 
-This extension sidesteps that entirely. It registers its tools through VS Code's native **Language Model Tools API** (`vscode.lm.registerTool`) — the same mechanism VS Code itself uses for built-in tools. There's no server to run, no port to open, and no separate process to whitelist. From your organization's point of view it's just a VS Code extension, subject to the same install policy as any other extension — not a new class of thing that needs a security exception. Everything runs in-process, using [pdf-lib](https://pdf-lib.js.org/) and [pdf-parse](https://www.npmjs.com/package/pdf-parse) directly, with no data leaving your machine.
+This extension sidesteps that entirely. It registers its tools through VS Code's native **Language Model Tools API** (`vscode.lm.registerTool`) — the same mechanism VS Code itself uses for built-in tools. There's no server to run, no port to open, and no separate process to whitelist. From your organization's point of view it's just a VS Code extension, subject to the same install policy as any other extension — not a new class of thing that needs a security exception. Everything runs in-process, using [pdf-lib](https://pdf-lib.js.org/) and [pdf-parse](https://www.npmjs.com/package/pdf-parse) for PDFs, and [mammoth](https://www.npmjs.com/package/mammoth) and [word-extractor](https://www.npmjs.com/package/word-extractor) for Word documents, with no data leaving your machine.
 
 If MCP is available to you, this still works — it's just not required.
 
@@ -23,8 +23,13 @@ If MCP is available to you, this still works — it's just not required.
 * **Split PDFs** — Extract a page range to a new file
 * **Update Metadata** — Modify title, author, subject, keywords
 * **Extract Pages** — Save individual pages as separate PDF files
+* **Read Word Documents** — Extract text from `.doc` and `.docx` files, with metadata, word count, approximate LLM token count, and optional `maxWords`/`maxTokens` pagination
 
-All 7 tools are available in Copilot agent mode and can be referenced with `#`.
+All 8 tools are available in Copilot agent mode and can be referenced with `#`.
+
+## What's new in 2.2.0
+
+* New `read_docx` tool — extract text and metadata from `.doc` and `.docx` files, with the same `maxWords`/`maxTokens` pagination as `read_pdf`.
 
 ## What's new in 2.1.0
 
@@ -70,7 +75,7 @@ You can reference tools explicitly with `#`:
 
 ```
 #pdf_read  #pdf_info  #pdf_create  #pdf_merge
-#pdf_split  #pdf_metadata  #pdf_extract
+#pdf_split  #pdf_metadata  #pdf_extract  #read_docx
 ```
 
 ### @pdf Chat Participant
@@ -132,6 +137,7 @@ A sample PDF is included in this repo for convenience: `test-document.pdf`.
 | `#pdf_split` | Split PDF | Extract page range to new file |
 | `#pdf_metadata` | Update Metadata | Set title, author, subject, keywords |
 | `#pdf_extract` | Extract Pages | Save individual pages as files |
+| `#read_docx` | Read Word Document | Extract text from `.doc`/`.docx`, optionally with maxWords/maxTokens pagination |
 
 > Note: File paths must be **absolute** (e.g. `C:\Users\me\file.pdf` or `/home/me/file.pdf`).
 

@@ -154,7 +154,7 @@ export function activate(context: vscode.ExtensionContext) {
         }),
         vscode.commands.registerCommand('pdfUtilities.showTools', () => {
             vscode.window.showInformationMessage(
-                'PDF tools: #pdf_read, #pdf_info, #pdf_create, #pdf_merge, #pdf_split, #pdf_metadata, #pdf_extract'
+                'PDF tools: #pdf_read, #pdf_info, #pdf_create, #pdf_merge, #pdf_split, #pdf_metadata, #pdf_extract, #read_docx'
             );
         })
     );

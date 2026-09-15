@@ -30,3 +30,23 @@ node_modules/pdf-parse/lib/pdf.js/v1.9.426/**
 node_modules/pdf-parse/lib/pdf.js/v2.0.550/**
 node_modules/pdf-parse/test/**
 node_modules/pdf-parse/*.md
+
+# mammoth: only lib/ (Node main entry) is used at runtime. The browser bundles,
+# CLI (bin/), and test fixtures are dead weight for a VS Code extension.
+node_modules/mammoth/mammoth.browser.js
+node_modules/mammoth/mammoth.browser.min.js
+node_modules/mammoth/browser/**
+node_modules/mammoth/bin/**
+node_modules/mammoth/test/**
+node_modules/mammoth/*.md
+node_modules/mammoth/NEWS
+
+# jszip: only lib/ (Node main entry) is used at runtime. dist/ (browser UMD/ESM
+# bundles) is dead weight for a VS Code extension.
+node_modules/jszip/dist/**
+node_modules/jszip/*.markdown
+node_modules/jszip/*.md
+
+# word-extractor: docs only, lib/ is the runtime code.
+node_modules/word-extractor/*.md
+node_modules/word-extractor/jsdoc.json

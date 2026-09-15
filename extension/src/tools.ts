@@ -1,13 +1,21 @@
 import * as vscode from 'vscode';
 import { PDFTools } from './pdf-tools';
+import { DocxTools } from './docx-tools';
 
 const pdfTools = new PDFTools();
+const docxTools = new DocxTools();
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
 
 interface IReadPdfParams {
   filePath: string;
   pageRange?: string;
+  maxWords?: number;
+  maxTokens?: number;
+}
+
+interface IReadDocxParams {
+  filePath: string;
   maxWords?: number;
   maxTokens?: number;
 }
@@ -77,6 +85,36 @@ export class ReadPdfTool implements vscode.LanguageModelTool<IReadPdfParams> {
         title: 'Read PDF',
         message: new vscode.MarkdownString(
           `Extract text from \`${options.input.filePath}\`${options.input.pageRange ? ` (pages ${options.input.pageRange})` : ''}?`
+        )
+      }
+    };
+  }
+}
+
+// ── Tool: read_docx ────────────────────────────────────────────────────────────
+
+export class ReadDocxTool implements vscode.LanguageModelTool<IReadDocxParams> {
+  async invoke(
+    options: vscode.LanguageModelToolInvocationOptions<IReadDocxParams>,
+    _token: vscode.CancellationToken
+  ): Promise<vscode.LanguageModelToolResult> {
+    const { filePath, maxWords, maxTokens } = options.input;
+    const result = await docxTools.readDocx(filePath, { maxWords, maxTokens });
+    return new vscode.LanguageModelToolResult([
+      new vscode.LanguageModelTextPart(JSON.stringify(result))
+    ]);
+  }
+
+  async prepareInvocation(
+    options: vscode.LanguageModelToolInvocationPrepareOptions<IReadDocxParams>,
+    _token: vscode.CancellationToken
+  ) {
+    return {
+      invocationMessage: `Reading Word document: ${options.input.filePath}`,
+      confirmationMessages: {
+        title: 'Read Word Document',
+        message: new vscode.MarkdownString(
+          `Extract text from \`${options.input.filePath}\`?`
         )
       }
     };
@@ -269,6 +307,7 @@ export class ExtractPagesTool implements vscode.LanguageModelTool<IExtractPagesP
 export function registerPdfTools(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.lm.registerTool('pdf-utilities_read_pdf', new ReadPdfTool()),
+    vscode.lm.registerTool('pdf-utilities_read_docx', new ReadDocxTool()),
     vscode.lm.registerTool('pdf-utilities_get_pdf_info', new GetPdfInfoTool()),
     vscode.lm.registerTool('pdf-utilities_create_pdf', new CreatePdfTool()),
     vscode.lm.registerTool('pdf-utilities_merge_pdfs', new MergePdfsTool()),

@@ -1,12 +1,12 @@
 ---
 name: PDFUtilitiesGuidelines
-description: Tools for PDF manipulation - read, create, merge, split, and edit PDFs
-applyTo: **/*.pdf
+description: Tools for PDF and Word document manipulation - read, create, merge, split, and edit PDFs; read Word documents
+applyTo: **/*.{pdf,doc,docx}
 ---
 
 # PDF Utilities - GitHub Copilot Chat Instructions
 
-This extension provides PDF manipulation tools registered natively in VS Code via the Language Model Tools API. Use these tools when the user asks to work with PDF files.
+This extension provides PDF and Word document tools registered natively in VS Code via the Language Model Tools API. Use these tools when the user asks to work with PDF or Word files.
 
 ## When to Use These Tools
 
@@ -18,6 +18,7 @@ Activate PDF utilities tools when the user wants to:
 - Split PDFs or extract specific pages
 - Update PDF metadata (title, author, subject, keywords)
 - Extract individual pages into separate files
+- Read or extract text from Word documents (.doc or .docx)
 
 ## Available Tools
 
@@ -40,7 +41,24 @@ User: "Get up to 200 words from the document"
 
 **Response Format**: Returns JSON with `text` (extracted content), `pages` (total page count), `info` (metadata including wordCount and approxTokenCount), `wordCount`, `approxTokenCount`, and optionally `truncated` (boolean) and `truncationMethod` ('maxWords' or 'maxTokens') if content was truncated.
 
-### 2. get_pdf_info
+### 2. read_docx
+**Purpose**: Extract text content from a Word document (.doc or .docx)
+
+**Parameters**:
+- `filePath` (required): Absolute path to the .doc or .docx file
+- `maxWords` (optional): Maximum number of words to return. Text is truncated at a word boundary. Full counts are still reported.
+- `maxTokens` (optional): Approximate maximum LLM tokens to return (~4 chars/token). Ignored if `maxWords` is also set.
+
+**Example Usage**:
+```
+User: "Read the Word document at /Users/name/report.docx"
+User: "What does this .doc file say?"
+User: "Read the first 500 tokens of this Word document"
+```
+
+**Response Format**: Returns JSON with `text` (extracted content), `info` (metadata including title, author, subject, lastModifiedBy, createdDate, modifiedDate, fileSize, format, wordCount, approxTokenCount), `wordCount`, `approxTokenCount`, and optionally `truncated`/`truncationMethod` if content was truncated, and `warnings` for any formatting mammoth could not fully convert. Legacy `.doc` files only report `fileSize`, `filePath`, and `format` in `info` (no title/author metadata is available for the older binary format). Word documents have no reliable page count without rendering, so no `pages` field is returned.
+
+### 3. get_pdf_info
 **Purpose**: Retrieve metadata and information about a PDF
 
 **Parameters**:
@@ -55,7 +73,7 @@ User: "What's the size of this PDF file?"
 
 **Response Format**: Returns JSON with pages, title, author, subject, creator, producer, dates, fileSize, filePath, wordCount, approxTokenCount
 
-### 3. create_pdf
+### 4. create_pdf
 **Purpose**: Create a new PDF from text content
 
 **Parameters**:
@@ -77,7 +95,7 @@ User: "Generate a PDF report with title 'Monthly Summary'"
 
 **Response Format**: Returns JSON with `success`, `path`, and `pages`
 
-### 4. merge_pdfs
+### 5. merge_pdfs
 **Purpose**: Combine multiple PDF files into a single PDF
 
 **Parameters**:
@@ -93,7 +111,7 @@ User: "Create a single PDF from all PDFs in this folder"
 
 **Response Format**: Returns JSON with `success`, `path`, and total `pages`
 
-### 5. split_pdf
+### 6. split_pdf
 **Purpose**: Extract specific pages from a PDF into a new file
 
 **Parameters**:
@@ -110,7 +128,7 @@ User: "Get pages 2, 4, and 6-10 from the report"
 
 **Response Format**: Returns JSON with `success`, `path`, and `pages` in new file
 
-### 6. update_pdf_metadata
+### 7. update_pdf_metadata
 **Purpose**: Update metadata fields of a PDF file
 
 **Parameters**:
@@ -131,7 +149,7 @@ User: "Set the metadata for contract.pdf"
 
 **Response Format**: Returns JSON with `success` and `path`
 
-### 7. extract_pages
+### 8. extract_pages
 **Purpose**: Extract specific pages into separate PDF files
 
 **Parameters**:

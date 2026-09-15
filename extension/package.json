@@ -1,8 +1,8 @@
 {
     "name": "copilot-pdf-utilities",
     "displayName": "PDF Tools for GitHub Copilot",
-    "description": "PDF Language Model tools for GitHub Copilot agent mode — read, create, merge, split, and edit PDFs without MCP",
-    "version": "2.1.0",
+    "description": "PDF (and Word) Language Model tools for GitHub Copilot agent mode — read, create, merge, split, and edit PDFs and Word documents without MCP",
+    "version": "2.2.0",
     "publisher": "thekaasking",
     "icon": "icon.png",
     "engines": {
@@ -23,7 +23,10 @@
         "pdf writer",
         "pdf merge",
         "pdf split",
-        "document processing"
+        "document processing",
+        "word",
+        "docx",
+        "doc"
     ],
     "activationEvents": [
         "onStartupFinished"
@@ -62,6 +65,40 @@
                         "pageRange": {
                             "type": "string",
                             "description": "Optional page range to extract, e.g. '1-5' or '1,3,5-10'. If omitted, all pages are extracted."
+                        },
+                        "maxWords": {
+                            "type": "number",
+                            "description": "Optional maximum number of words to return. Text is truncated at a word boundary if exceeded. The full wordCount and approxTokenCount are still reported."
+                        },
+                        "maxTokens": {
+                            "type": "number",
+                            "description": "Optional approximate maximum number of LLM tokens to return (uses ~4 chars/token heuristic). Text is truncated if exceeded. Ignored if maxWords is also set. The full wordCount and approxTokenCount are still reported."
+                        }
+                    },
+                    "required": [
+                        "filePath"
+                    ]
+                }
+            },
+            {
+                "name": "pdf-utilities_read_docx",
+                "tags": [
+                    "docx",
+                    "word",
+                    "pdf-utilities"
+                ],
+                "toolReferenceName": "read_docx",
+                "displayName": "Read Word Document",
+                "userDescription": "Extract text content from a Word document (.doc or .docx).",
+                "modelDescription": "Extracts text from a Word document (.doc or .docx) and returns the full text along with metadata (title, author, subject, last modified by, dates, file size, format). Also returns wordCount and approxTokenCount for the extracted text. Use this when you need to read the content of a Word document. Supports optional pagination via maxWords or maxTokens to limit the returned text. File path must be absolute.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(file-text)",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string",
+                            "description": "Absolute path to the .doc or .docx file to read."
                         },
                         "maxWords": {
                             "type": "number",
@@ -365,8 +402,11 @@
         "typescript": "^6.0.3"
     },
     "dependencies": {
+        "jszip": "^3.10.2",
+        "mammoth": "^1.12.3",
         "pdf-lib": "^1.17.1",
-        "pdf-parse": "^1.1.1"
+        "pdf-parse": "^1.1.1",
+        "word-extractor": "^1.0.4"
     },
     "repository": {
         "type": "git",
