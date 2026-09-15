@@ -124,8 +124,7 @@ Settings in VS Code (Code > Settings):
 
 * [User Guide](extension/README.md)
 * [Developer Guide](README.md)
-* [Build Guide](BUILD_PUBLISH_GUIDE.md)
-* [Implementation Plan](IMPLEMENTATION_PLAN.md)
+* [Build Guide](assets/BUILD_PUBLISH_GUIDE.md)
 
 ## Publishing to Marketplace
 
@@ -143,6 +142,6 @@ Requires:
 * Personal Access Token (PAT)
 * Already configured in `.env`
 
-## Done! 
+## Done
 
 The extension is fully built and ready to use. Just install the VSIX and start working with PDFs in GitHub Copilot Chat!

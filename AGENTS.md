@@ -46,25 +46,28 @@ copilot-pdf-utilities/            ← repo root
 │   ├── tsconfig.test.json   ← TypeScript config for Jest (module: commonjs)
 │   └── jest.config.js       ← Jest configuration
 ├── README.md                ← Project readme
-├── BUILD_PUBLISH_GUIDE.md   ← Build and publish instructions
+├── assets/BUILD_PUBLISH_GUIDE.md   ← Build and publish instructions
 └── docs/                    ← Reference documentation
 ```
 
 ### Component Responsibilities
 
 **Extension Entry (`extension/src/extension.ts`)**:
+
 * Activates on VS Code startup
 * Calls `registerPdfTools(context)` to register 7 LM tools
 * Registers `@pdf` chat participant
 * Registers commands: `pdfUtilities.viewDocs`, `pdfUtilities.showTools`
 
 **LM Tool Classes (`extension/src/tools.ts`)**:
+
 * 7 classes implementing `vscode.LanguageModelTool<T>`: `ReadPdfTool`, `GetPdfInfoTool`, `CreatePdfTool`, `MergePdfsTool`, `SplitPdfTool`, `UpdatePdfMetadataTool`, `ExtractPagesTool`
 * Each implements `invoke()` and `prepareInvocation()`
 * Tool names registered: `pdf-utilities_read_pdf`, `pdf-utilities_get_pdf_info`, etc.
 * User-facing `#` references: `#pdf_read`, `#pdf_info`, `#pdf_create`, `#pdf_merge`, `#pdf_split`, `#pdf_metadata`, `#pdf_extract`
 
 **PDF Business Logic (`extension/src/pdf-tools.ts`)**:
+
 * `PDFTools` class with all PDF operations
 * Uses `pdf-lib` for creation/modification (with `useObjectStreams: false` for compatibility)
 * Uses `pdf-parse` for text extraction only
@@ -73,6 +76,7 @@ copilot-pdf-utilities/            ← repo root
 * `getPDFInfo` returns `wordCount` and `approxTokenCount` alongside other metadata
 
 **Tokenizer (`extension/src/tokenizer.ts`)**:
+
 * Lightweight, zero-dependency token/word estimation
 * `countWords(text)`: whitespace-based word count
 * `estimateTokens(text)`: approximate LLM token count using `ceil(chars / 4)` heuristic (~±10% for English, compatible with GPT/Claude BPE)
@@ -243,7 +247,6 @@ const out = path.join(os.tmpdir(), `test-${Date.now()}.pdf`);
 
 ## 🔗 Links
 
-* **Repository**: https://github.com/thekaasking/copilot-pdf-utilities
-* **Marketplace**: https://marketplace.visualstudio.com/items?itemName=thekaasking.pdf-utilities
-* **Issues**: https://github.com/thekaasking/copilot-pdf-utilities/issues
-
+* **Repository**: <https://github.com/thekaasking/copilot-pdf-utilities>
+* **Marketplace**: <https://marketplace.visualstudio.com/items?itemName=thekaasking.pdf-utilities>
+* **Issues**: <https://github.com/thekaasking/copilot-pdf-utilities/issues>
