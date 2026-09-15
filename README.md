@@ -1,5 +1,7 @@
 # PDF Utilities for GitHub Copilot
 
+![PDF Utilities working reading a PDF](assets/read_pdf_tool.png)
+
 A VS Code extension that exposes 7 PDF manipulation tools directly to GitHub Copilot agent mode using the **Language Model Tools API** — no MCP server, no subprocess, works in every organisation.
 
 MCP is blocked by policy in most enterprise environments (`chat.mcp.enabled` locked off, or disabled org-wide in Copilot Business/Enterprise settings), since it means letting arbitrary local processes or network endpoints into the chat context. This extension needs none of that: tools are registered via `vscode.lm.registerTool`, the same native API VS Code uses for its own built-in tools, so it's just an ordinary extension install — no security exception required.
@@ -21,8 +23,10 @@ pdf-utilities-mcp/
 
 ## Tools
 
+![PDF Utilities enabled in the GitHub Copilot chat toolbar](assets/tools_enabled.png)
+
 | `#reference` | Description |
-|---|---|
+| --- | --- |
 | `#pdf_read` | Extract text from a PDF (optional page range, maxWords/maxTokens pagination) |
 | `#pdf_info` | Get metadata: pages, title, author, file size, word count, token estimate… |
 | `#pdf_create` | Create a new PDF from plain text |

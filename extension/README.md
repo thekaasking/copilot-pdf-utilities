@@ -1,5 +1,7 @@
 # PDF Utilities for GitHub Copilot
 
+![PDF Utilities working reading a PDF](assets/read_pdf_tool.png)
+
 AI-powered PDF tools built directly into GitHub Copilot agent mode — no MCP server, no subprocess, works everywhere.
 
 ## Why this extension exists
@@ -11,6 +13,8 @@ This extension sidesteps that entirely. It registers its tools through VS Code's
 If MCP is available to you, this still works — it's just not required.
 
 ## Features
+
+![PDF Utilities enabled in the GitHub Copilot chat toolbar](assets/tools_enabled.png)
 
 * **Read PDFs** — Extract text content (full file or specific page ranges), with word count, approximate LLM token count, and optional `maxWords`/`maxTokens` pagination
 * **Get PDF Info** — Retrieve metadata: page count, title, author, file size, dates, word count, token estimate
@@ -82,27 +86,35 @@ Attach a PDF file in chat and ask questions about it:
 With the extension installed and GitHub Copilot Chat open in **agent mode**:
 
 1. **Word/token counts on `get_pdf_info`** — attach or reference a PDF and ask:
+
    ```
    #pdf_info Get info on <absolute path to a .pdf>
    ```
+
    The JSON result should include `wordCount` and `approxTokenCount` alongside the existing metadata fields.
 
 2. **Word/token counts on `read_pdf`** — ask:
+
    ```
    #pdf_read Read <absolute path to a .pdf>
    ```
+
    The result includes top-level `wordCount` and `approxTokenCount` for the full document (also mirrored inside `info`).
 
 3. **`maxWords` pagination** — ask:
+
    ```
    Read the first 50 words of <absolute path to a .pdf>
    ```
+
    Copilot should call `read_pdf` with `maxWords: 50`. The returned `text` is truncated at a word boundary, `truncated: true` and `truncationMethod: "maxWords"` are set, while `wordCount`/`approxTokenCount` still reflect the *full* document.
 
 4. **`maxTokens` pagination** — ask:
+
    ```
    Read about 500 tokens worth of <absolute path to a .pdf>
    ```
+
    Same as above, but with `truncationMethod: "maxTokens"`.
 
 5. **No truncation on a short document** — read a short PDF with no `maxWords`/`maxTokens`; confirm `truncated` is absent from the response entirely (rather than `false`).
@@ -112,7 +124,7 @@ A sample PDF is included in this repo for convenience: `test-document.pdf`.
 ## Available Tools
 
 | Reference | Tool Name | Description |
-|---|---|---|
+| --- | --- | --- |
 | `#pdf_read` | Read PDF | Extract text, optionally with page range and maxWords/maxTokens pagination |
 | `#pdf_info` | Get PDF Info | Metadata (pages, title, author, size, word count, token estimate) |
 | `#pdf_create` | Create PDF | New PDF from text content |
@@ -128,7 +140,7 @@ A sample PDF is included in this repo for convenience: `test-document.pdf`.
 `Ctrl+,` → search for **PDF Utilities**
 
 | Setting | Default | Description |
-|---|---|---|
+| --- | --- | --- |
 | `pdfUtilities.logLevel` | `info` | Log verbosity: error / warn / info / debug |
 | `pdfUtilities.maxPdfSize` | `50` | Maximum PDF file size in MB |
 
