@@ -2,6 +2,8 @@
 
 A VS Code extension that exposes 7 PDF manipulation tools directly to GitHub Copilot agent mode using the **Language Model Tools API** — no MCP server, no subprocess, works in every organisation.
 
+MCP is blocked by policy in most enterprise environments (`chat.mcp.enabled` locked off, or disabled org-wide in Copilot Business/Enterprise settings), since it means letting arbitrary local processes or network endpoints into the chat context. This extension needs none of that: tools are registered via `vscode.lm.registerTool`, the same native API VS Code uses for its own built-in tools, so it's just an ordinary extension install — no security exception required.
+
 ## Architecture
 
 ```
