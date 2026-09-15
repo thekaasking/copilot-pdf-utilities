@@ -1,10 +1,32 @@
 .vscode/**
 .vscode-test/**
 src/**
+tests/**
 .gitignore
 tsconfig.json
+tsconfig.test.json
+jest.config.js
+create-icon.js
 *.vsix
 .env
 .DS_Store
 *.log
 temp/**
+
+# pdf-lib: only cjs/ is used at runtime (Node main entry). dist/ (browser UMD/ESM
+# bundles + sourcemaps), es/ (ESM build) and ts3.4/ (old TS<3.7 typings) are dead
+# weight for a VS Code extension.
+node_modules/pdf-lib/dist/**
+node_modules/pdf-lib/es/**
+node_modules/pdf-lib/ts3.4/**
+node_modules/pdf-lib/src/**
+node_modules/pdf-lib/*.md
+
+# pdf-parse bundles 4 versions of pdf.js under lib/pdf.js/; only the default
+# version (v1.10.100, set in lib/pdf-parse.js DEFAULT_OPTIONS.version) is ever
+# used since we never pass a custom `version` option. Keep only that one.
+node_modules/pdf-parse/lib/pdf.js/v1.10.88/**
+node_modules/pdf-parse/lib/pdf.js/v1.9.426/**
+node_modules/pdf-parse/lib/pdf.js/v2.0.550/**
+node_modules/pdf-parse/test/**
+node_modules/pdf-parse/*.md
